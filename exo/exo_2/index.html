@@ -18,8 +18,10 @@
 
         // s'il y a une majuscule au début des fonctions, ça devient des componsants react
 
-        function TitleComponent(){
-            return ( <h1>La maison jungle</h1>);
+        function TitleComponent()
+        {
+            const title = "la maison jungle";
+            return (<h1>{ title.charAt(0).toUpperCase() + title.slice(1) }</h1>);
         }
 
         function Description() 
@@ -29,12 +31,40 @@
             return (<p>{ text.slice(0, 61) + emojis }</p>);
         }
 
+        
+
         function Banner(){
             return (
                 <React.Fragment>
                     <TitleComponent/>
                     <Description/>
+                    <Cart/>
                 </React.Fragment>
+            );
+        }
+
+        function Cart()
+        {
+            const plante1 = 'monstera'; 
+            const plante2 = 'lierre'; 
+            const plante3 = 'bouquet de fleurs'; 
+
+            const monsteraPrice = 8;
+            const lierrePrice = 10;
+            const fleursPrice = 15;
+
+            return (
+
+                <div>
+                    <h2>Panier</h2>
+
+                    <ul>
+                        <li>{ plante1 } : { monsteraPrice } €</li>
+                        <li>{ plante2 } : { lierrePrice } €</li>
+                        <li>{ plante3 } : { fleursPrice } €</li>
+                    </ul>
+                    Total : { monsteraPrice + lierrePrice + fleursPrice } €
+                </div>
             );
         }
 
