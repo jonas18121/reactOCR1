@@ -68,4 +68,207 @@ Si vous voulez éviter les bugs, une  key  doit impérativement respecter deux p
 
 - Et stable dans le temps (pour la même donnée source, on aura toujours la même valeur de key=).
 
-la `key` permet d'associer une donnée au composant correspondant dans le DOM virtuel qui permettra ensuite de générer les composants. 
+la `key` permet d'`associer une donnée au composant correspondant dans le DOM virtuel` qui permettra ensuite de générer les composants. 
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+Si votre key n'est pas unique ou bien change dans le temps, 
+votre DOM virtuel risque de confondre les données entre elles – notamment si un élément venait à être inséré dans la liste, ou bien supprimé de la liste ! 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+Nous avons plusieurs méthodes pour générer une `key` unique :
+
+- La méthode la plus simple et la plus fiable consiste à `utiliser l'id associée à votre donnée` dans votre base de données.
+
+- Vous pouvez également trouver un moyen d'`exploiter la valeur de la donnée`, si vous avez la certitude qu'elle sera toujours unique, et stable dans le temps.
+
+- En dernier recours, vous pouvez `définir une string et la combiner avec l'index` de la data dans votre tableau.
+
+Dans notre cas, puisqu'il n'y a pas d'id associée, 
+on peut faire une combinaison entre l'index et le nom de la plante qui est une string :
+
+dans `ShoppingList.js`
+
+    function ShoppingList() {
+        return (
+            <ul>
+                {plantList.map((plant, index) => (
+                    <li key={`${plant}-${index}`}>{ plant }</li>
+                ))}
+            </ul>
+        )
+    }
+
+    export default ShoppingList
+
+
+## Contextualisez le contenu de vos composants
+
+React nous permet de faire des listes de composants : 
+un gain de temps énorme dans votre vie de développeur. 
+Mais ce n'est pas tout !Le JSX nous permet également d'`afficher des éléments de manière conditionnelle dans nos composants.`
+
+### Créez des conditions dans le JSX 
+
+Dans notre liste de plantes  `plantList.js`, je vais `rajouter une catégorie` isBestSale `correspondant à un ` booléen qui nous indique si notre plante fait partie des meilleures ventes. 
+Ce qui nous donne pour le premier élément 
+
+Maintenant que nous avons notre booléen, nous allons `utiliser un ternaire pour afficher un emoji en fonction.` Dans  `ShoppingList.js`, au niveau de l'affichage du nom, je rajoute :
+
+dans `plantList.js`
+
+    export const plantList = [
+        {
+            name: 'monstera',
+            category: 'classique',
+            id: '1ed',
+            isBestSale: true
+        },
+        {
+            name: 'ficus lyrata',
+            category: 'classique',
+            id: '2ab',
+            isBestSale: false
+        },
+        {
+            name: 'pothos argenté',
+            category: 'classique',
+            id: '3sd',
+            isBestSale: false
+        },
+        {
+            name: 'yucca',
+            category: 'classique',
+            id: '4kk',
+            isBestSale: false
+        },
+        {
+            name: 'olivier',
+            category: 'extérieur',
+            id: '5pl',
+            isBestSale: false
+        },
+        {
+            name: 'géranium',
+            category: 'extérieur',
+            id: '6uo',
+            isBestSale: false
+        },
+        {
+            name: 'basilique',
+            category: 'extérieur',
+            id: '7ie',
+            isBestSale: false
+        },
+        {
+            name: 'aloe',
+            category: 'plante grasse',
+            id: '8fp',
+            isBestSale: false
+        },
+        {
+            name: 'succulente',
+            category: 'plante grasse',
+            id: '9vn',
+            isBestSale: false
+        }
+    ]
+
+
+Dans  `ShoppingList.js`
+
+    import { plantList } from '../datas/plantList';
+
+    function ShoppingList() {
+
+        return (
+            <ul>
+                {
+                    plantList.map(
+                        (plant) => (
+                            <li key={ plant.id }>
+                                { plant.name } { plant.isBestSale ? <span>🔥</span> : null }
+                            </li>
+                        )
+                    )
+                }
+            </ul>
+        );
+    }
+
+    export default ShoppingList
+
+
+`On peutaussi utiliser  &&.`
+
+Indiquée entre accolades, `&&` précède un élément JSX et précise que l'élément ne sera généré seulement si la condition est respectée. On peut donc écrire :
+
+
+Dans  `ShoppingList.js`
+
+    import { plantList } from '../datas/plantList';
+
+    function ShoppingList() {
+
+        return (
+            <ul>
+                {
+                    plantList.map(
+                        (plant) => (
+                            <li key={ plant.id }>
+                                
+                                { plant.name } { plant.isBestSale && <span>🔥</span> }
+                            </li>
+                        )
+                    )
+                }
+            </ul>
+        );
+    }
+
+    export default ShoppingList
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+Vous pouvez d'ailleurs chaîner les conditions.
+
+Si par exemple, vous vouliez afficher le 🔥 pour les plantes qui sont des  isBestSale   ET dans la category classique :
+
+    //traduction : si plant.isBestSale =  true et  plant.category = classique, on affiche la flamme sinon on affiche rien
+
+    {plant.isBestSale && plant.category === "classique" && <span>🔥</span>}
+
+De la même manière, si vous aviez voulu que le 🔥 s'affiche à côté des plantes qui sont  isBestSale   OU dans la category classique :
+
+    {plant.isBestSale || plant.category === "classique" && <span>🔥</span>}
+
+Mais gare à la propreté du code. Si vous avez trop de conditions, je vous conseille de les sortir de ce qui est retourné par votre fonction. 😉
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+### Ouvrez-vous à d'autres méthodes
+
+React est particulièrement flexible : il existe d'autres méthodes permettant de contextualiser votre contenu.
+
+## En résumé
+
+- À partir d’une liste de données,  map()   permet de créer une liste de composants React.
+
+- La prop  key   est indispensable dans les listes de composants.
+
+- Si vous voulez éviter les bugs, la prop  key   doit : 
+
+- être unique au sein de la liste ;
+
+- perdurer dans le temps.
+
+- La best practice pour créer une  key   est d’utiliser l’ id   unique associée à une donnée, et de ne pas vous contenter d'utiliser l'index de l'élément dans la liste.
+
+- Une condition ternaire permet d’afficher un élément ou un autre dans le JSX, répondant à la condition "if… else...".
+
+- Il existe d'autres manières de créer des conditions en React, notamment en sortant les conditions du JSX.
