@@ -4,3 +4,12 @@
     padding: 32px;
     border-bottom: solid 3px black;
 }
+
+.lmj-title {
+    padding: 32;
+}
+
+.lmj-logo {
+    height: 45px;
+    width: 45px;
+}
